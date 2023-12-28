@@ -32,17 +32,19 @@ const Login = () => {
       password: password,
     };
 
-    axios.post("http://localhost:4000/sign-in", requestBody).then((res) => {
-      console.log(res.data);
-      if (res.data.message === "Login successful") {
-        sessionStorage.setItem("userEmail", email);
-        navigate(`/home`, {
-          state: { isLoggedIn: true, userData: requestBody.email },
-        });
-      } else {
-        alert(res.data.message);
-      }
-    });
+    axios
+      .post("https://brand-platform.onrender.com/sign-in", requestBody)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.message === "Login successful") {
+          sessionStorage.setItem("userEmail", email);
+          navigate(`/home`, {
+            state: { isLoggedIn: true, userData: requestBody.email },
+          });
+        } else {
+          alert(res.data.message);
+        }
+      });
   };
 
   const googleLogin = useGoogleLogin({
@@ -88,7 +90,7 @@ const Login = () => {
       };
 
       axios
-        .post("http://localhost:4000/sign-in", signInRequestBody)
+        .post("https://brand-platform.onrender.com/sign-in", signInRequestBody)
         .then((res) => {
           console.log(res.data);
           if (res.data.message === "Login successful") {
@@ -103,11 +105,13 @@ const Login = () => {
           }
         });
       if (signIn == false) {
-        axios.post("http://localhost:4000/sign-up", requestBody).then((res) => {
-          console.log(res);
-          sessionStorage.setItem("userEmail", email);
-          navigate(`/home`);
-        });
+        axios
+          .post("https://brand-platform.onrender.com/sign-up", requestBody)
+          .then((res) => {
+            console.log(res);
+            sessionStorage.setItem("userEmail", email);
+            navigate(`/home`);
+          });
       }
     },
   });

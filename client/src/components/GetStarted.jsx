@@ -37,7 +37,7 @@ const GetStarted = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/get-users")
+      .get("https://brand-platform.onrender.com/get-users")
       .then((response) => {
         setUsers(response.data);
       })

@@ -55,13 +55,15 @@ const Register = () => {
         DOB: DOB,
         brandName: brandName,
       };
-      axios.post("http://localhost:4000/sign-up", requestBody).then((res) => {
-        if (res.data.message === "Sign-up successful") {
-          navigate(`/home`, {
-            state: { isLoggedIn: true, userData: requestBody.email },
-          });
-        }
-      });
+      axios
+        .post("https://brand-platform.onrender.com/sign-up", requestBody)
+        .then((res) => {
+          if (res.data.message === "Sign-up successful") {
+            navigate(`/home`, {
+              state: { isLoggedIn: true, userData: requestBody.email },
+            });
+          }
+        });
     }
   };
 

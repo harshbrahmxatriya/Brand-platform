@@ -13,7 +13,7 @@ const UserStatusList = ({ currentUser, allUsers, handleUserClick }) => {
       return;
     }
 
-    const ws = new WebSocket("ws://localhost:8000");
+    const ws = new WebSocket("wss://brand-platform.onrender.com");
     ws.addEventListener("message", (event) => {
       try {
         const data = JSON.parse(event.data);

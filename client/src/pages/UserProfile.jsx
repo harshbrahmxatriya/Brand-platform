@@ -58,15 +58,6 @@ const ProfileUI = ({ currentUser }) => {
       DOB !== currentUser.DOB ||
       file !== currentUser.profilePicture
     ) {
-      // const updatedProfil = {
-      //   id,
-      //   firstName,
-      //   lastName,
-      //   userType,
-      //   DOB,
-      //   file,
-      // };
-
       const updatedProfile = new FormData();
       updatedProfile.append("id", id);
       updatedProfile.append("firstName", firstName);
@@ -78,7 +69,10 @@ const ProfileUI = ({ currentUser }) => {
       console.log("FormData:", updatedProfile);
 
       axios
-        .post("http://localhost:4000/update-profile", updatedProfile)
+        .post(
+          "https://brand-platform.onrender.com/update-profile",
+          updatedProfile
+        )
         .then((response) => {
           alert("Profile updated successfully");
           console.log(response);
@@ -209,7 +203,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/get-users")
+      .get("https://brand-platform.onrender.com/get-users")
       .then((response) => {
         console.log(response.data);
         setUsers(response.data);
