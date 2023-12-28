@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .box-style {
+    @apply bg-[rgba(255,255,255,0.3)] border-l border-t border-solid rounded-lg
+          border-[rgba(255,255,255,0.3)] backdrop-blur-md shadow-2xln
+            transition-all duration-200 animate-pulse absolute;
+  }
+  .input-style {
+    @apply bg-transparent w-[200px] p-4 mb-8 border-0 border-l border-t 
+    border-solid border-[rgba(255,255,255,0.3)] backdrop-blur rounded-full 
+    shadow-xl text-white font-montserrat font-medium 
+    drop-shadow-[2px_2px_4px_rgba(0,0,0,0.2)] transition-all duration-200
+    hover:bg-[rgb(255,255,255,0.1)] hover:shadow-xlc hover:animate-[ease-in-out]
+    focus:shadow-xlc focus:outline-none
+    placeholder:font-montserrat placeholder:font-normal placeholder:text-white placeholder:drop-shadow-[2px_2px_4px_rgba(0,0,0,0.2)];
+  }
+  .form-style {
+    @apply h-fit flex flex-col justify-center bg-[rgba(255,255,255,0.3)] p-12 
+            rounded-[20px] border-l border-t border-solid border-[rgba(255,255,255,0.3)] 
+            backdrop-blur-md shadow-3xl text-center relative transition-all 
+            animate-[ease-in-out];
+  }
+}
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+
+/* body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+} */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  
+  button {
+    background-color: #f9f9f9;
+  }
+}
