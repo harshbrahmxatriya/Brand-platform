@@ -12,6 +12,7 @@ import Chat from "./Chat";
 import UserStatusList from "./UserStatusList";
 import UserCard from "./UserCard";
 import MainPanel from "./MainPanel";
+import "./GetStarted.css";
 
 const GetStarted = () => {
   const [isChatVisible, setChatVisible] = useState(false);
