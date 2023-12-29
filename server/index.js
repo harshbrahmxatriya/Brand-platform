@@ -12,7 +12,7 @@ import {
   hashPassword,
 } from "./lib/utils/hashPassword.js";
 
-const wss = new WebSocketServer({ port: 10000 });
+const wss = new WebSocketServer({ port: 8000 });
 const onlineUsers = new Set();
 
 cloudinary.config({
@@ -66,12 +66,7 @@ wss.on("connection", (ws) => {
 });
 
 const app = express();
-app.use(
-  cors({
-    origin: "https://brand-platform.vercel.app", // Replace with your Vercel app URL
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json());
 
 app.get("/", async (req, res) => {
