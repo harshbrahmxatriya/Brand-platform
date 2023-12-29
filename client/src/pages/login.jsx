@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { GoogleLogin } from "@react-oauth/google";
@@ -18,7 +18,6 @@ const Login = () => {
   const [number, setNumber] = useState(0);
   const [DOB, setDOB] = useState("");
   const [brandName, setBrandName] = useState("");
-  const [signIn, setSignIn] = useState(true);
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
@@ -99,20 +98,18 @@ const Login = () => {
             navigate(`/home`);
           }
           if (res.data.message === "No account found with this email.") {
-            console.log("entered this block");
-            setSignIn(false);
-            console.log(signIn);
+            axios
+              .post("https://brand-platform.onrender.com/sign-up", requestBody)
+              .then((res) => {
+                console.log(res);
+                sessionStorage.setItem("userEmail", email);
+                navigate(`/home`);
+              });
           }
+        })
+        .catch((error) => {
+          console.error("Error in signing in: ", error);
         });
-      if (signIn == false) {
-        axios
-          .post("https://brand-platform.onrender.com/sign-up", requestBody)
-          .then((res) => {
-            console.log(res);
-            sessionStorage.setItem("userEmail", email);
-            navigate(`/home`);
-          });
-      }
     },
   });
 
