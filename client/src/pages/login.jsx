@@ -91,17 +91,14 @@ const Login = () => {
       axios
         .post("https://brand-platform.onrender.com/sign-in", signInRequestBody)
         .then((res) => {
-          console.log(res.data);
           if (res.data.message === "Login successful") {
             sessionStorage.setItem("userEmail", email);
-            setSignIn(true);
             navigate(`/home`);
           }
           if (res.data.message === "No account found with this email.") {
             axios
               .post("https://brand-platform.onrender.com/sign-up", requestBody)
               .then((res) => {
-                console.log(res);
                 sessionStorage.setItem("userEmail", email);
                 navigate(`/home`);
               });
