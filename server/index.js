@@ -3,7 +3,6 @@ import cors from "cors";
 import { WebSocketServer, WebSocket } from "ws";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
-import { createServer } from "http";
 
 import connectDB from "./mongodb/connect.js";
 import UserSchema from "./models/UserDetails.js";
@@ -13,15 +12,8 @@ import {
   hashPassword,
 } from "./lib/utils/hashPassword.js";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-const server = createServer();
-const wss = new WebSocketServer({ server });
-
-server.on("request", app);
-
+const PORT = process.env.PORT || 3000;
+const wss = new WebSocket.Server({ port: PORT });
 const onlineUsers = new Set();
 
 cloudinary.config({
@@ -73,6 +65,10 @@ wss.on("connection", (ws) => {
     broadcastOnlineUsers();
   });
 });
+
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 app.get("/", async (req, res) => {
   res.send("Hello from Server" + new Date().getTime());
@@ -267,7 +263,7 @@ const startServer = async () => {
     connectDB(
       "mongodb+srv://vibhuti:qwerty12345@cluster0.df3fdce.mongodb.net/?retryWrites=true&w=majority"
     );
-    server.listen(80, () =>
+    app.listen(4000, () =>
       console.log("Server has started on port http://localhost:4000")
     );
   } catch (error) {
