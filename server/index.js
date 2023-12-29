@@ -66,7 +66,12 @@ wss.on("connection", (ws) => {
 });
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://brand-platform.vercel.app", // Replace with your Vercel app URL
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.get("/", async (req, res) => {
