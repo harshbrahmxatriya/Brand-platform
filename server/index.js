@@ -12,7 +12,7 @@ import {
   hashPassword,
 } from "./lib/utils/hashPassword.js";
 
-const wss = new WebSocketServer({ port: 4000 });
+const wss = new WebSocketServer({ port: 8000 });
 const onlineUsers = new Set();
 
 cloudinary.config({
