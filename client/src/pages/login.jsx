@@ -23,6 +23,7 @@ const Login = () => {
 
   if (!serverUrl) {
     console.log("no server url !");
+    serverUrl = "https://brand-platform.onrender.com";
   }
 
   const handleEmail = (e) => {

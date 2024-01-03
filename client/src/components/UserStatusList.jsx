@@ -9,6 +9,11 @@ const UserStatusList = ({ currentUser, allUsers, handleUserClick }) => {
   const [socket, setSocket] = useState(null);
   const websocketUrl = process.env.WEBSOCKET_URL;
 
+  if (!websocketUrl) {
+    console.log("no websocket url !");
+    websocketUrl = "wss://brand-platform.onrender.com";
+  }
+
   useEffect(() => {
     if (!currentUser || !currentUser.firstName || !currentUser.email) {
       return;

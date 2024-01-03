@@ -13,6 +13,12 @@ function MainPanel({ selectedUser, currentUser }) {
   const serverUrl = import.meta.env.VITE_SERVER_URL;
   const websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
 
+  if (!serverUrl) {
+    console.log("no server url !");
+    serverUrl = "https://brand-platform.onrender.com";
+    websocketUrl = "wss://brand-platform.onrender.com";
+  }
+
   const fetchMessages = async () => {
     try {
       if (!nameFrom || !nameTo) {

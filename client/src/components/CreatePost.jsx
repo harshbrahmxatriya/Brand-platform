@@ -9,6 +9,12 @@ const CreatePost = ({ setShowCreatePost }) => {
   const [file, setFile] = useState(null);
 
   const serverUrl = import.meta.env.VITE_SERVER_URL;
+
+  if (!serverUrl) {
+    console.log("no server url !");
+    serverUrl = "https://brand-platform.onrender.com";
+  }
+
   const handleContainerClick = (e) => {
     e.stopPropagation();
   };
