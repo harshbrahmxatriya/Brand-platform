@@ -10,8 +10,8 @@ function MainPanel({ selectedUser, currentUser }) {
   const [nameFrom, setNameFrom] = useState("");
   const [nameTo, setNameTo] = useState("");
   const [chatArray, setChatArray] = useState([]);
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
-  const websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
+  let serverUrl = import.meta.env.VITE_SERVER_URL;
+  let websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
 
   if (!serverUrl) {
     console.log("no server url !");

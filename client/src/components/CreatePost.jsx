@@ -8,7 +8,7 @@ const CreatePost = ({ setShowCreatePost }) => {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
 
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
+  let serverUrl = import.meta.env.VITE_SERVER_URL;
 
   if (!serverUrl) {
     console.log("no server url !");

@@ -7,7 +7,7 @@ import { item } from "../lib/utils/animation";
 const UserStatusList = ({ currentUser, allUsers, handleUserClick }) => {
   const [users, setUsers] = useState([]);
   const [socket, setSocket] = useState(null);
-  const websocketUrl = process.env.WEBSOCKET_URL;
+  let websocketUrl = import.meta.env.WEBSOCKET_URL;
 
   if (!websocketUrl) {
     console.log("no websocket url !");

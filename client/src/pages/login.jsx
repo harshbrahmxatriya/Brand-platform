@@ -18,7 +18,7 @@ const Login = () => {
   const [number, setNumber] = useState(0);
   const [DOB, setDOB] = useState("");
   const [brandName, setBrandName] = useState("");
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
+  let serverUrl = import.meta.env.VITE_SERVER_URL;
   console.log(serverUrl);
 
   if (!serverUrl) {

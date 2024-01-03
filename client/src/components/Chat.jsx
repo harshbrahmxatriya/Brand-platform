@@ -10,7 +10,7 @@ const Chat = ({ userName }) => {
   const [keyword, setKeyword] = useState("");
   const [searchedUsers, setSearchedUsers] = useState([]);
 
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
+  let serverUrl = import.meta.env.VITE_SERVER_URL;
 
   if (!serverUrl) {
     console.log("no server url !");

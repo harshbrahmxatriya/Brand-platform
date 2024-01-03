@@ -24,7 +24,7 @@ const GetStarted = () => {
   const [searchedUsers, setSearchedUsers] = useState([]);
   const [onlineFlag, setOnlineFlag] = useState(true);
   const userEmail = sessionStorage.getItem("userEmail");
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
+  let serverUrl = import.meta.env.VITE_SERVER_URL;
 
   if (!serverUrl) {
     console.log("no server url !");
