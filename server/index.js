@@ -11,9 +11,38 @@ import {
   compareHashWithPassword,
   hashPassword,
 } from "./lib/utils/hashPassword.js";
+import PostUploads from "./models/postUploads.js";
 
-const wss = new WebSocketServer({ port: 8000 });
 const onlineUsers = new Set();
+
+let wsServer;
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const startServer = async () => {
+  try {
+    connectDB(
+      "mongodb+srv://vibhuti:qwerty12345@cluster0.df3fdce.mongodb.net/?retryWrites=true&w=majority"
+    );
+    const httpServer = app.listen(4000, () =>
+      console.log("Server has started on port http://localhost:4000")
+    );
+
+    wsServer = new WebSocketServer({ noServer: true });
+
+    httpServer.on("upgrade", (req, socket, head) => {
+      wsServer.handleUpgrade(req, socket, head, (ws) => {
+        wsServer.emit("connection", ws, req);
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+startServer();
 
 cloudinary.config({
   cloud_name: "ddmvcifmt",
@@ -25,7 +54,7 @@ function broadcastOnlineUsers() {
   const usersWithDetails = Array.from(onlineUsers).map(
     (user) => user.userDetails
   );
-  wss.clients.forEach((client) => {
+  wsServer.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ type: "users", users: usersWithDetails }));
     }
@@ -33,14 +62,14 @@ function broadcastOnlineUsers() {
 }
 
 function broadcastMessage(message) {
-  wss.clients.forEach((client) => {
+  wsServer.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ type: "message", message }));
     }
   });
 }
 
-wss.on("connection", (ws) => {
+wsServer.on("connection", (ws) => {
   ws.on("message", (message) => {
     try {
       const data = JSON.parse(message);
@@ -64,10 +93,6 @@ wss.on("connection", (ws) => {
     broadcastOnlineUsers();
   });
 });
-
-const app = express();
-app.use(cors());
-app.use(express.json());
 
 app.get("/", async (req, res) => {
   res.send("Hello from Server" + new Date().getTime());
@@ -182,7 +207,7 @@ app.post("/send-message", async (req, res) => {
     console.error(error);
     res
       .status(500)
-      .json({ error: "An error occurred while creating the post" });
+      .json({ error: "An error occurred while sending a message" });
   }
 });
 
@@ -201,7 +226,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(null, file.originalname);
   },
 });
 
@@ -210,12 +235,6 @@ const upload = multer({ storage: storage }).single("profilePicture");
 app.post("/update-profile", upload, async (req, res) => {
   try {
     const { id, firstName, lastName, userType, DOB } = req.body;
-    console.log("Request body:", req.body);
-    console.log("Uploaded file:", req.file);
-
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
 
     const cloudinaryResponse = await cloudinary.uploader.upload(
       req.file.path,
@@ -224,9 +243,7 @@ app.post("/update-profile", upload, async (req, res) => {
         console.log(error);
       }
     );
-    //To change the picture:
-    // public_id: "brand-platform/ekbsrb3vymrtgoksd2t7",
-    // invalidate: "true"
+
     const cloudinaryImageUrl = cloudinaryResponse.secure_url;
     const cloudinaryImageId = cloudinaryResponse.public_id;
     console.log(cloudinaryImageId);
@@ -257,17 +274,41 @@ app.post("/update-profile", upload, async (req, res) => {
   }
 });
 
-const startServer = async () => {
-  try {
-    connectDB(
-      "mongodb+srv://vibhuti:qwerty12345@cluster0.df3fdce.mongodb.net/?retryWrites=true&w=majority"
-    );
-    app.listen(4000, () =>
-      console.log("Server has started on port http://localhost:4000")
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
+const uploadPostImage = multer({ storage: storage }).single("images");
 
-startServer();
+app.post("/postUpload", uploadPostImage, async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    console.log("Request body:", req.body);
+
+    let cloudinaryResponse = "";
+    let cloudinaryImageUrl = "";
+    if (req.file) {
+      console.log("Uploaded file:", req.file);
+      try {
+        cloudinaryResponse = await cloudinary.uploader.upload(req.file.path, {
+          folder: "brand-platform/postImages",
+        });
+        cloudinaryImageUrl = cloudinaryResponse.secure_url;
+      } catch (error) {
+        console.error("Cloudinary upload error:", error);
+        return res.status(500).json({ error: "Error uploading to Cloudinary" });
+      }
+    }
+
+    const newPost = new PostUploads({
+      title,
+      description,
+      images: cloudinaryImageUrl,
+      time: new Date().getTime(),
+    });
+    await newPost.save();
+
+    res.status(201).json({ message: "Post created successfully" });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while creating the post" });
+  }
+});
