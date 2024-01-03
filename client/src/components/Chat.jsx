@@ -10,14 +10,17 @@ const Chat = ({ userName }) => {
   const [keyword, setKeyword] = useState("");
   const [searchedUsers, setSearchedUsers] = useState([]);
 
+  const serverUrl = import.meta.env.VITE_SERVER_URL;
+
   const userEmail = sessionStorage.getItem("userEmail");
+
   const handleSelectUser = (user) => {
     setSelectedUser(user);
   };
 
   useEffect(() => {
     axios
-      .get("https://brand-platform.onrender.com/get-users")
+      .get(`${serverUrl}/get-users`)
       .then((response) => {
         setUsers(response.data);
       })

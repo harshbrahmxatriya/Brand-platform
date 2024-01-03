@@ -18,6 +18,7 @@ const Login = () => {
   const [number, setNumber] = useState(0);
   const [DOB, setDOB] = useState("");
   const [brandName, setBrandName] = useState("");
+  const serverUrl = import.meta.env.VITE_SERVER_URL;
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
@@ -31,19 +32,17 @@ const Login = () => {
       password: password,
     };
 
-    axios
-      .post("https://brand-platform.onrender.com/sign-in", requestBody)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.message === "Login successful") {
-          sessionStorage.setItem("userEmail", email);
-          navigate(`/home`, {
-            state: { isLoggedIn: true, userData: requestBody.email },
-          });
-        } else {
-          alert(res.data.message);
-        }
-      });
+    axios.post(`${serverUrl}/sign-in`, requestBody).then((res) => {
+      console.log(res.data);
+      if (res.data.message === "Login successful") {
+        sessionStorage.setItem("userEmail", email);
+        navigate(`/home`, {
+          state: { isLoggedIn: true, userData: requestBody.email },
+        });
+      } else {
+        alert(res.data.message);
+      }
+    });
   };
 
   const googleLogin = useGoogleLogin({
@@ -89,19 +88,17 @@ const Login = () => {
       };
 
       axios
-        .post("https://brand-platform.onrender.com/sign-in", signInRequestBody)
+        .post(`{/sign-in`, signInRequestBody)
         .then((res) => {
           if (res.data.message === "Login successful") {
             sessionStorage.setItem("userEmail", email);
             navigate(`/home`);
           }
           if (res.data.message === "No account found with this email.") {
-            axios
-              .post("https://brand-platform.onrender.com/sign-up", requestBody)
-              .then((res) => {
-                sessionStorage.setItem("userEmail", email);
-                navigate(`/home`);
-              });
+            axios.post(`${serverUrl}/sign-up`, requestBody).then((res) => {
+              sessionStorage.setItem("userEmail", email);
+              navigate(`/home`);
+            });
           }
         })
         .catch((error) => {

@@ -8,10 +8,10 @@ import { LuLogOut } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 
 import { container, item } from "../lib/utils/animation";
-import Chat from "./Chat";
-import UserStatusList from "./UserStatusList";
-import UserCard from "./UserCard";
-import MainPanel from "./MainPanel";
+import Chat from "../components/Chat";
+import UserStatusList from "../components/UserStatusList";
+import UserCard from "../components/UserCard";
+import MainPanel from "../components/MainPanel";
 import "./GetStarted.css";
 
 const GetStarted = () => {
@@ -24,7 +24,7 @@ const GetStarted = () => {
   const [searchedUsers, setSearchedUsers] = useState([]);
   const [onlineFlag, setOnlineFlag] = useState(true);
   const userEmail = sessionStorage.getItem("userEmail");
-
+  const serverUrl = import.meta.env.VITE_SERVER_URL;
   const navigate = useNavigate();
   const handleSelectUser = (user) => {
     setSelectedUser(user);
@@ -38,7 +38,7 @@ const GetStarted = () => {
 
   useEffect(() => {
     axios
-      .get("https://brand-platform.onrender.com/get-users")
+      .get(`${serverUrl}/get-users`)
       .then((response) => {
         setUsers(response.data);
       })
@@ -98,7 +98,7 @@ const GetStarted = () => {
             animate="show"
             className="flex flex-col "
           >
-            <div>
+            <div className="flex justify-between items-center">
               <m.div
                 variants={item}
                 className="text-4xl hero-text m-2.5 my-4 text-[rgb(128,128,128)] 
@@ -106,12 +106,22 @@ const GetStarted = () => {
               >
                 Brand Platform
               </m.div>
+              <div>
+                <Link to="/posts">
+                  <m.button
+                    variants={item}
+                    className="px-4 py-2 border-2 border-stone-700 text-lg"
+                  >
+                    Posts
+                  </m.button>
+                </Link>
+              </div>
             </div>
 
             <input
-              className="w-[90%] font-montserrat self-center py-2 text-xl placeholder:text-xl 
-          border-b-2 border-black
-          focus:outline-none"
+              className="w-[90%] font-montserrat self-center py-2 text-xl 
+              placeholder:text-xl border-b-2 border-black
+              focus:outline-none"
               placeholder="Search keyword..."
               onChange={(e) => {
                 if (e.target.value === "") {

@@ -10,6 +10,8 @@ function MainPanel({ selectedUser, currentUser }) {
   const [nameFrom, setNameFrom] = useState("");
   const [nameTo, setNameTo] = useState("");
   const [chatArray, setChatArray] = useState([]);
+  const serverUrl = import.meta.env.VITE_SERVER_URL;
+  const websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
 
   const fetchMessages = async () => {
     try {
@@ -18,9 +20,7 @@ function MainPanel({ selectedUser, currentUser }) {
         return;
       }
 
-      const response = await axios.get(
-        "https://brand-platform.onrender.com/get-messages"
-      );
+      const response = await axios.get(`${serverUrl}/get-messages`);
       const allMessages = response.data;
 
       const filteredMessages = allMessages.filter(
@@ -38,7 +38,7 @@ function MainPanel({ selectedUser, currentUser }) {
   const wsRef = useRef(null);
   useEffect(() => {
     console.log("Connecting to WebSocket...");
-    wsRef.current = new WebSocket("wss://brand-platform.onrender.com:8000");
+    wsRef.current = new WebSocket(websocketUrl);
     wsRef.current.addEventListener("open", () => {
       console.log("WebSocket connection opened");
     });
@@ -104,7 +104,7 @@ function MainPanel({ selectedUser, currentUser }) {
 
     try {
       axios
-        .post("https://brand-platform.onrender.com/send-message", requestBody, {
+        .post(`${serverUrl}/send-message`, requestBody, {
           headers: {
             "Content-Type": "application/json",
           },

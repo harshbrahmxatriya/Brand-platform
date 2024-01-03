@@ -7,13 +7,14 @@ import { item } from "../lib/utils/animation";
 const UserStatusList = ({ currentUser, allUsers, handleUserClick }) => {
   const [users, setUsers] = useState([]);
   const [socket, setSocket] = useState(null);
+  const websocketUrl = process.env.WEBSOCKET_URL;
 
   useEffect(() => {
     if (!currentUser || !currentUser.firstName || !currentUser.email) {
       return;
     }
 
-    const ws = new WebSocket("wss://brand-platform.onrender.com");
+    const ws = new WebSocket(websocketUrl);
     ws.addEventListener("message", (event) => {
       try {
         const data = JSON.parse(event.data);

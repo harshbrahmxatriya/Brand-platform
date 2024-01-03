@@ -8,8 +8,9 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import Login from "./pages/login.jsx";
 import Login2 from "./pages/login2.jsx";
 import Register from "./pages/register.jsx";
-import GetStarted from "./components/GetStarted.jsx";
+import GetStarted from "./pages/GetStarted.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
+import Posts from "./pages/Posts.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/home" element={<App />} />
         <Route path="/get-started" element={<GetStarted />} />
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/posts" element={<Posts />} />
       </Routes>
     </GoogleOAuthProvider>
   </BrowserRouter>
