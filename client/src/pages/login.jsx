@@ -20,6 +20,11 @@ const Login = () => {
   const [brandName, setBrandName] = useState("");
   const serverUrl = import.meta.env.VITE_SERVER_URL;
   console.log(serverUrl);
+
+  if (!serverUrl) {
+    console.log("no server url !");
+  }
+
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
