@@ -19,7 +19,7 @@ const Login = () => {
   const [DOB, setDOB] = useState("");
   const [brandName, setBrandName] = useState("");
   const serverUrl = import.meta.env.VITE_SERVER_URL;
-
+  console.log(serverUrl);
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
