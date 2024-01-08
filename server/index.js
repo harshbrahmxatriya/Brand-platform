@@ -157,13 +157,13 @@ app.post("/sign-up", async (req, res) => {
     const signup = new UserSchema({
       email,
       password_hash,
+      profilePicture,
       userType,
       firstName,
       lastName,
       contactNumber,
       DOB,
       brandName,
-      profilePicture,
     });
 
     await signup.save();
@@ -211,16 +211,6 @@ app.post("/send-message", async (req, res) => {
   }
 });
 
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "public");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + "-" + file.originalname);
-//   },
-// });
-
-// const upload = multer({ storage: storage }).single("file");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
@@ -278,7 +268,7 @@ const uploadPostImage = multer({ storage: storage }).single("images");
 
 app.post("/postUpload", uploadPostImage, async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, creator, description } = req.body;
     console.log("Request body:", req.body);
 
     let cloudinaryResponse = "";
@@ -298,6 +288,7 @@ app.post("/postUpload", uploadPostImage, async (req, res) => {
 
     const newPost = new PostUploads({
       title,
+      creator,
       description,
       images: cloudinaryImageUrl,
       time: new Date().getTime(),
@@ -310,5 +301,57 @@ app.post("/postUpload", uploadPostImage, async (req, res) => {
     res
       .status(500)
       .json({ error: "An error occurred while creating the post" });
+  }
+});
+
+app.get("/get-post-uploads", async (req, res) => {
+  try {
+    const messages = await PostUploads.find({});
+
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching messages" });
+  }
+});
+
+app.post("/update-likes", async (req, res) => {
+  try {
+    const { id, email, action } = req.body;
+    let updateQuery;
+    let likesUpdate;
+
+    if (action === "plus") {
+      updateQuery = { $addToSet: { likedBy: email } };
+      likesUpdate = 1;
+    } else if (action === "minus") {
+      updateQuery = { $pull: { likedBy: email } };
+      likesUpdate = -1;
+    } else {
+      return res.status(400).json({ error: "Invalid action" });
+    }
+
+    const result = await PostUploads.findByIdAndUpdate(id, updateQuery, {
+      new: true,
+      upsert: true,
+    });
+    let newLikes;
+    if (likesUpdate) {
+      newLikes = result.likes = (result.likes || 0) + likesUpdate;
+      await result.save();
+    }
+
+    console.log("Update Likes Result:", result);
+
+    return res
+      .status(200)
+      .json({ message: "Likes updated successfully", newLikes: newLikes });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching messages" });
   }
 });

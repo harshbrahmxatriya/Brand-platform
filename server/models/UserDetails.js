@@ -14,7 +14,6 @@ const UserDetails = mongoose.Schema({
   contactNumber: { type: Number },
   DOB: { type: Date },
   brandName: { type: String },
-  profilePicture: { type: String },
 });
 
 const UserSchema = mongoose.model("login_platform", UserDetails);

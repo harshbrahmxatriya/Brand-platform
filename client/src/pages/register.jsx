@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 
@@ -17,7 +17,27 @@ const Register = () => {
   const [number, setNumber] = useState(0);
   const [DOB, setDOB] = useState("");
   const [brandName, setBrandName] = useState("");
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+
+  let serverUrl = import.meta.env.VITE_SERVER_URL;
+  console.log(serverUrl);
+
+  if (!serverUrl) {
+    console.log("no server url !");
+    serverUrl = "https://brand-platform.onrender.com";
+  }
+
+  useEffect(() => {
+    axios
+      .get(`${serverUrl}/get-users`)
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+  }, []);
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
@@ -45,6 +65,12 @@ const Register = () => {
     if (password !== confirmPassword) {
       alert("Passwords do not match");
     } else {
+      const currentUser = users.find((item) => item.email === email);
+      if (currentUser) {
+        alert("This email is already registered.");
+        return;
+      }
+
       const requestBody = {
         email: email,
         password: password,
@@ -55,15 +81,14 @@ const Register = () => {
         DOB: DOB,
         brandName: brandName,
       };
-      axios
-        .post("https://brand-platform.onrender.com/sign-up", requestBody)
-        .then((res) => {
-          if (res.data.message === "Sign-up successful") {
-            navigate(`/home`, {
-              state: { isLoggedIn: true, userData: requestBody.email },
-            });
-          }
-        });
+
+      axios.post(`${serverUrl}/sign-up`, requestBody).then((res) => {
+        if (res.data.message === "Sign-up successful") {
+          navigate(`/home`, {
+            state: { isLoggedIn: true, userData: requestBody.email },
+          });
+        }
+      });
     }
   };
 

@@ -7,7 +7,7 @@ const CreatePost = ({ setShowCreatePost }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState(null);
-
+  const userEmail = sessionStorage.getItem("userEmail");
   let serverUrl = import.meta.env.VITE_SERVER_URL;
 
   if (!serverUrl) {
@@ -25,9 +25,11 @@ const CreatePost = ({ setShowCreatePost }) => {
   }
 
   const createPost = () => {
+    const descriptionEdited = description.slice(3, -4);
     const postData = new FormData();
     postData.append("title", title);
-    postData.append("description", description);
+    postData.append("creator", userEmail);
+    postData.append("description", descriptionEdited);
     postData.append("images", file);
 
     axios

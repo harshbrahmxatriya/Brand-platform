@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { GoogleLogin } from "@react-oauth/google";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -18,8 +19,8 @@ const Login = () => {
   const [number, setNumber] = useState(0);
   const [DOB, setDOB] = useState("");
   const [brandName, setBrandName] = useState("");
+  const location = useLocation();
   let serverUrl = import.meta.env.VITE_SERVER_URL;
-  console.log(serverUrl);
 
   if (!serverUrl) {
     console.log("no server url !");
@@ -42,9 +43,14 @@ const Login = () => {
       console.log(res.data);
       if (res.data.message === "Login successful") {
         sessionStorage.setItem("userEmail", email);
-        navigate(`/home`, {
-          state: { isLoggedIn: true, userData: requestBody.email },
-        });
+
+        if (location.state) {
+          window.location.href = location.state.url;
+        } else {
+          navigate(`/home`, {
+            state: { isLoggedIn: true, userData: requestBody.email },
+          });
+        }
       } else {
         alert(res.data.message);
       }
@@ -94,7 +100,7 @@ const Login = () => {
       };
 
       axios
-        .post(`{/sign-in`, signInRequestBody)
+        .post(`${serverUrl}/sign-in`, signInRequestBody)
         .then((res) => {
           if (res.data.message === "Login successful") {
             sessionStorage.setItem("userEmail", email);
