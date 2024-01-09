@@ -124,7 +124,7 @@ const PostCard = ({ users, post }) => {
     const requestBody = { id: post._id, sender: userEmail, comment };
     await axios
       .post(`${serverUrl}/post-comment`, requestBody)
-      .then((response) => alert(response.data));
+      .then(() => setComment(""));
   };
   return (
     <div className="w-full mb-2 bg-white flex flex-col shadow">
@@ -169,14 +169,15 @@ const PostCard = ({ users, post }) => {
             <GoComment
               className="mr-2 cursor-pointer fill-black ml-1"
               color="black"
-              onClick={() => setShowComment(true)}
+              onClick={() => setShowComment(!showComment)}
               size={30}
             />
           </button>
         </div>
         <div>
           {likes}
-          {`${likes > 1 ? " likes" : " like"}`}
+          {`${likes > 1 ? " likes" : " like"}`}, {commentsArray.length}
+          {`${commentsArray.length > 1 ? " comments" : " comment"}`}
         </div>
       </div>
       {showComment && (
