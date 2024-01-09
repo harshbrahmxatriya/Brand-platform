@@ -5,7 +5,12 @@ const postUploads = mongoose.Schema({
   creator: { type: String },
   description: { type: String, required: true },
   images: { type: String },
-  comments: [{ type: String }],
+  comments: [
+    {
+      sender: String,
+      comment: String,
+    },
+  ],
   likes: { type: Number, default: 0 },
   likedBy: [{ type: String }],
 });

@@ -11,10 +11,17 @@ const PostCard = ({ users, post }) => {
   const [creator, setCreator] = useState();
   const [likes, setLikes] = useState(post.likes);
   const userEmail = sessionStorage.getItem("userEmail");
+  const [comment, setComment] = useState("");
+  const [showComment, setShowComment] = useState(false);
+  const [commentsArray, setCommentsArray] = useState(post.comments);
+
+  console.log(post.comments);
   let serverUrl = import.meta.env.VITE_SERVER_URL;
+  let websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
   if (!serverUrl) {
     console.log("no server url !");
     serverUrl = "https://brand-platform.onrender.com";
+    websocketUrl = "wss://brand-platform.onrender.com";
   }
   useEffect(() => {
     const creatorDetails = users.find((item) => item.email === post.creator);
@@ -25,7 +32,41 @@ const PostCard = ({ users, post }) => {
     );
     setIsLiked(isLikedByCurrentUser);
   }, []);
-  console.log(post._id);
+
+  const [ws, setWs] = useState(null);
+
+  useEffect(() => {
+    const socket = new WebSocket(websocketUrl);
+
+    socket.onopen = () => {
+      const userDetails = {
+        email: userEmail,
+      };
+      socket.send(JSON.stringify({ type: "userDetails", userDetails }));
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "newComment" && data.id === post._id) {
+          console.log(data);
+          setCommentsArray((prevComments) => [
+            ...prevComments,
+            { id: data.id, sender: data.sender, comment: data.comment },
+          ]);
+        }
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    setWs(socket);
+
+    return () => {
+      socket.close();
+    };
+  }, [post._id]);
+
   const renderContent = () => {
     const maxLength = 160;
     let content;
@@ -75,6 +116,16 @@ const PostCard = ({ users, post }) => {
     await axios.post(`${serverUrl}/update-likes`, requestBody);
   };
 
+  const sendComment = async () => {
+    if (!userEmail) {
+      alert("Sign in first");
+      return;
+    }
+    const requestBody = { id: post._id, sender: userEmail, comment };
+    await axios
+      .post(`${serverUrl}/post-comment`, requestBody)
+      .then((response) => alert(response.data));
+  };
   return (
     <div className="w-full mb-2 bg-white flex flex-col shadow">
       <section className="p-2 border-b flex justify-between items-center">
@@ -98,28 +149,76 @@ const PostCard = ({ users, post }) => {
         <div className="flex items-center">
           <BsHeart
             onClick={like}
-            className={`mr-2.5 fill-slate-800 ${isLiked ? "hidden" : ""}`}
+            className={`mr-2.5 fill-black cursor-pointer ${
+              isLiked ? "hidden" : ""
+            }`}
             size={26}
           />
           {isLiked && (
             <BsHeartFill
               onClick={dontLike}
-              className="mr-2.5 fill-slate-800"
+              className="mr-2.5 fill-black cursor-pointer"
               size={26}
             />
           )}
-
-          <GoComment
-            className="mr-2 cursor-pointer fill-slate-800"
-            color="black"
-            size={30}
-          />
+          <button
+            className="border-none flex justify-center items-center p-2 px-1 bg-white border-[rgba(167,167,167,0.7)] 
+          hover:border hover:rounded-full hover:bg-[rgba(167,167,167,0.7)]          
+          "
+          >
+            <GoComment
+              className="mr-2 cursor-pointer fill-black ml-1"
+              color="black"
+              onClick={() => setShowComment(true)}
+              size={30}
+            />
+          </button>
         </div>
         <div>
           {likes}
           {`${likes > 1 ? " likes" : " like"}`}
         </div>
       </div>
+      {showComment && (
+        <>
+          <div className="p-2 mb-4 flex px-6">
+            <input
+              type="text"
+              placeholder="Type your comment on this post"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-3/4 py-2 bg-transparent text-black
+            border-b  border-black outline-none
+            focus:outline-none
+            placeholder:text-base"
+            />
+            <button
+              className="p-3 py-2 ml-4 bg-black text-white"
+              onClick={sendComment}
+            >
+              Comment
+            </button>
+          </div>
+          <div className="p-2 mb-2">
+            {commentsArray.map((item) => {
+              const commenter = users.find(
+                (user) => user.email === item.sender
+              );
+              return (
+                <div className="flex items-center mb-2 ">
+                  <img
+                    src={commenter.profilePicture}
+                    alt={commenter.firstName}
+                    className="h-12 w-12 mr-2 object-cover rounded-full"
+                  />
+                  <span className="mr-2 text-gray-800 font-bold">{`${commenter.firstName} ${commenter.lastName}`}</span>
+                  <p key={item._id}>{item.comment}</p>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 };

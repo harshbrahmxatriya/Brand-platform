@@ -81,6 +81,21 @@ wsServer.on("connection", (ws) => {
         broadcastOnlineUsers();
       } else if (data.type === "message") {
         broadcastMessage(data);
+      } else if (data.type === "postComment") {
+        const { id, sender, comment } = data;
+
+        wsServer.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(
+              JSON.stringify({
+                type: "newComment",
+                id,
+                sender,
+                comment,
+              })
+            );
+          }
+        });
       }
     } catch (error) {
       console.error("Error parsing message:", error);
@@ -350,8 +365,44 @@ app.post("/update-likes", async (req, res) => {
       .json({ message: "Likes updated successfully", newLikes: newLikes });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching messages" });
+    res.status(500).json({ error: "An error occurred while updating likes" });
+  }
+});
+
+app.post("/post-comment", async (req, res) => {
+  try {
+    const { id, sender, comment } = req.body;
+
+    wsServer.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "newComment",
+            id: id,
+            sender: sender,
+            comment: comment,
+          })
+        );
+      }
+    });
+    const results = await PostUploads.findByIdAndUpdate(id, {
+      $addToSet: { comments: { sender, comment } },
+    });
+
+    return res.status(200).json(" comment posted successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while posting comment" });
+  }
+});
+
+app.get("/get-comments", async (req, res) => {
+  try {
+    const response = await PostUploads.find({});
+    console.log(response);
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occured while fetching" });
   }
 });
