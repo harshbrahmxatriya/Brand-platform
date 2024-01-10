@@ -166,9 +166,11 @@ const PostCard = ({ users, post }) => {
           alt={`image for blog ${post.title}`}
           className={`max-h-[50vh] mx-auto my-auto self-center`}
         />
-        <span className="absolute top-2 right-2 text-xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer">
-          {`${activeSlideIndex + 1}/${post.images.length}`}
-        </span>
+        {post.images.length > 1 && (
+          <span className="absolute top-2 right-2 text-xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer">
+            {`${activeSlideIndex + 1}/${post.images.length}`}
+          </span>
+        )}
         {post.images.length > 1 && (
           <span
             className="absolute top-[50%] left-2 text-3xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer"

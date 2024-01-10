@@ -279,12 +279,10 @@ app.post("/update-profile", upload, async (req, res) => {
   }
 });
 
-const uploadPostImage = multer({ storage: storage }).array("images", 10);
+const uploadPostImage = multer({ storage: storage }).any();
 app.post("/postUpload", uploadPostImage, async (req, res) => {
   try {
     const { title, creator, description } = req.body;
-    console.log(req.files[0].path);
-    console.log(req.files[1].path);
     let cloudinaryImageUrls = [];
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
@@ -317,6 +315,7 @@ app.post("/postUpload", uploadPostImage, async (req, res) => {
     res.status(201).json({ message: "Post created successfully" });
   } catch (error) {
     console.error("Error updating profile:", error);
+    console.error(error.stack);
     res
       .status(500)
       .json({ error: "An error occurred while creating the post" });
