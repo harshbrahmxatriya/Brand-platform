@@ -4,6 +4,8 @@ import { MdOutlineModeComment } from "react-icons/md";
 import { GoComment } from "react-icons/go";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import axios from "axios";
+import SimpleImageSlider from "react-simple-image-slider";
+import ReactSimplyCarousel from "react-simply-carousel";
 
 const PostCard = ({ users, post }) => {
   const [isTruncated, setIsTruncated] = useState(true);
@@ -14,7 +16,13 @@ const PostCard = ({ users, post }) => {
   const [comment, setComment] = useState("");
   const [showComment, setShowComment] = useState(false);
   const [commentsArray, setCommentsArray] = useState(post.comments);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
+  const imagesArray = [];
+  for (let i = 0; i < post.images.length; i++) {
+    imagesArray.push({ url: post.images[i] });
+  }
+  console.log(imagesArray);
   console.log(post.comments);
   let serverUrl = import.meta.env.VITE_SERVER_URL;
   let websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
@@ -116,6 +124,20 @@ const PostCard = ({ users, post }) => {
     await axios.post(`${serverUrl}/update-likes`, requestBody);
   };
 
+  const toggleNext = () => {
+    if (activeSlideIndex === post.images.length - 1) {
+      setActiveSlideIndex(0);
+    } else {
+      setActiveSlideIndex(activeSlideIndex + 1);
+    }
+  };
+  const togglePrevious = () => {
+    if (activeSlideIndex === 0) {
+      setActiveSlideIndex(post.images.length - 1);
+    } else {
+      setActiveSlideIndex(activeSlideIndex - 1);
+    }
+  };
   const sendComment = async () => {
     if (!userEmail) {
       alert("Sign in first");
@@ -126,6 +148,7 @@ const PostCard = ({ users, post }) => {
       .post(`${serverUrl}/post-comment`, requestBody)
       .then(() => setComment(""));
   };
+
   return (
     <div className="w-full mb-2 bg-white flex flex-col shadow">
       <section className="p-2 border-b flex justify-between items-center">
@@ -137,11 +160,33 @@ const PostCard = ({ users, post }) => {
           />
         )}
       </section>
-      <img
-        src={post.images}
-        alt={`image for blog ${post.title}`}
-        className={`max-h-[50vh] self-center`}
-      />
+      <div className="flex relative ">
+        <img
+          src={post.images[activeSlideIndex]}
+          alt={`image for blog ${post.title}`}
+          className={`max-h-[50vh] mx-auto my-auto self-center`}
+        />
+        <span className="absolute top-2 right-2 text-xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer">
+          {`${activeSlideIndex + 1}/${post.images.length}`}
+        </span>
+        {post.images.length > 1 && (
+          <span
+            className="absolute top-[50%] left-2 text-3xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer"
+            onClick={togglePrevious}
+          >
+            {`<`}
+          </span>
+        )}
+        {post.images.length > 1 && (
+          <span
+            className="absolute top-[50%] right-2 text-3xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer"
+            onClick={toggleNext}
+          >
+            {`>`}
+          </span>
+        )}
+      </div>
+
       <section className="m-2 mb-6 ">
         <p className="text-lg"> {renderContent()} </p>
       </section>

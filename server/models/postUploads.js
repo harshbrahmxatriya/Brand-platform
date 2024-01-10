@@ -4,7 +4,7 @@ const postUploads = mongoose.Schema({
   title: { type: String },
   creator: { type: String },
   description: { type: String, required: true },
-  images: { type: String },
+  images: [{ type: String }],
   comments: [
     {
       sender: String,

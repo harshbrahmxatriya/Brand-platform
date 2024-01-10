@@ -279,25 +279,29 @@ app.post("/update-profile", upload, async (req, res) => {
   }
 });
 
-const uploadPostImage = multer({ storage: storage }).single("images");
-
+const uploadPostImage = multer({ storage: storage }).array("images", 10);
 app.post("/postUpload", uploadPostImage, async (req, res) => {
   try {
     const { title, creator, description } = req.body;
-    console.log("Request body:", req.body);
-
-    let cloudinaryResponse = "";
-    let cloudinaryImageUrl = "";
-    if (req.file) {
-      console.log("Uploaded file:", req.file);
-      try {
-        cloudinaryResponse = await cloudinary.uploader.upload(req.file.path, {
-          folder: "brand-platform/postImages",
-        });
-        cloudinaryImageUrl = cloudinaryResponse.secure_url;
-      } catch (error) {
-        console.error("Cloudinary upload error:", error);
-        return res.status(500).json({ error: "Error uploading to Cloudinary" });
+    console.log(req.files[0].path);
+    console.log(req.files[1].path);
+    let cloudinaryImageUrls = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        try {
+          const cloudinaryResponse = await cloudinary.uploader.upload(
+            file.path,
+            {
+              folder: "brand-platform/postImages",
+            }
+          );
+          cloudinaryImageUrls.push(cloudinaryResponse.secure_url);
+        } catch (error) {
+          console.error("Cloudinary upload error:", error);
+          return res
+            .status(500)
+            .json({ error: "Error uploading to Cloudinary" });
+        }
       }
     }
 
@@ -305,7 +309,7 @@ app.post("/postUpload", uploadPostImage, async (req, res) => {
       title,
       creator,
       description,
-      images: cloudinaryImageUrl,
+      images: cloudinaryImageUrls,
       time: new Date().getTime(),
     });
     await newPost.save();

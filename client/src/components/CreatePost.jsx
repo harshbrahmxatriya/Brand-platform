@@ -6,7 +6,7 @@ import axios from "axios";
 const CreatePost = ({ setShowCreatePost }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState(null);
   const userEmail = sessionStorage.getItem("userEmail");
   let serverUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -20,17 +20,19 @@ const CreatePost = ({ setShowCreatePost }) => {
   };
 
   function handleChange(e) {
-    console.log(e.target.files[0]);
-    setFile(e.target.files[0]);
+    console.log(e.target.files);
+    setFiles(e.target.files);
   }
 
   const createPost = () => {
-    const descriptionEdited = description.slice(3, -4);
     const postData = new FormData();
     postData.append("title", title);
     postData.append("creator", userEmail);
-    postData.append("description", descriptionEdited);
-    postData.append("images", file);
+    postData.append("description", description);
+
+    for (let i = 0; i < files.length; i++) {
+      postData.append("images", files[i]);
+    }
 
     axios
       .post(`${serverUrl}/postUpload`, postData)
@@ -77,6 +79,7 @@ const CreatePost = ({ setShowCreatePost }) => {
           name="profilePicture"
           className="text-xs"
           onChange={handleChange}
+          multiple
         />
       </form>
       <button

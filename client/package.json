@@ -27,6 +27,8 @@
     "react-lines-ellipsis": "^0.15.4",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.17.0",
+    "react-simple-image-slider": "^2.4.1",
+    "react-simply-carousel": "^9.1.1",
     "styled-components": "^6.1.0",
     "ws": "^8.14.2"
   },
