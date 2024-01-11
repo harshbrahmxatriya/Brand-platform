@@ -143,6 +143,8 @@ const PostCard = ({ users, post }) => {
     if (!userEmail) {
       alert("Sign in first");
       return;
+    } else if(comment.length===0){
+      return
     }
     const requestBody = { id: post._id, sender: userEmail, comment };
     await axios
