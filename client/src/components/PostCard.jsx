@@ -6,6 +6,7 @@ import { BsHeart, BsHeartFill } from "react-icons/bs";
 import axios from "axios";
 import SimpleImageSlider from "react-simple-image-slider";
 import ReactSimplyCarousel from "react-simply-carousel";
+import { CiSquareChevRight, CiSquareChevLeft } from "react-icons/ci";
 
 const PostCard = ({ users, post }) => {
   const [isTruncated, setIsTruncated] = useState(true);
@@ -164,7 +165,7 @@ const PostCard = ({ users, post }) => {
         <img
           src={post.images[activeSlideIndex]}
           alt={`image for blog ${post.title}`}
-          className={`max-h-[50vh] mx-auto my-auto self-center`}
+          className={`h-[50vh] mx-auto my-auto self-center`}
         />
         {post.images.length > 1 && (
           <span className="absolute top-2 right-2 text-xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer">
@@ -173,18 +174,18 @@ const PostCard = ({ users, post }) => {
         )}
         {post.images.length > 1 && (
           <span
-            className="absolute top-[50%] left-2 text-3xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer"
+            className="absolute top-[45%] left-2 text-3xl  cursor-pointer"
             onClick={togglePrevious}
           >
-            {`<`}
+            <CiSquareChevLeft size={40} />
           </span>
         )}
         {post.images.length > 1 && (
           <span
-            className="absolute top-[50%] right-2 text-3xl rounded-sm text-gray-800 px-1 bg-[rgba(255,255,255,0.46)] cursor-pointer"
+            className="absolute top-[45%] right-2 text-3xl cursor-pointer"
             onClick={toggleNext}
           >
-            {`>`}
+            <CiSquareChevRight size={40} />
           </span>
         )}
       </div>
