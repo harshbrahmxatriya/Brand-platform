@@ -104,12 +104,24 @@ const Login = () => {
         .then((res) => {
           if (res.data.message === "Login successful") {
             sessionStorage.setItem("userEmail", email);
-            navigate(`/home`);
+            if (location.state) {
+              window.location.href = location.state.url;
+            } else {
+              navigate(`/home`, {
+                state: { isLoggedIn: true, userData: requestBody.email },
+              });
+            }
           }
           if (res.data.message === "No account found with this email.") {
             axios.post(`${serverUrl}/sign-up`, requestBody).then((res) => {
               sessionStorage.setItem("userEmail", email);
-              navigate(`/home`);
+              if (location.state) {
+                window.location.href = location.state.url;
+              } else {
+                navigate(`/home`, {
+                  state: { isLoggedIn: true, userData: requestBody.email },
+                });
+              }
             });
           }
         })
