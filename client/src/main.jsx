@@ -11,6 +11,8 @@ import Register from "./pages/register.jsx";
 import GetStarted from "./pages/GetStarted.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Posts from "./pages/Posts.jsx";
+import UserPage from "./pages/UserPage.jsx";
+import Blog from "./pages/Blog.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -21,8 +23,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/sign-up" element={<Register />} />
         <Route path="/home" element={<App />} />
         <Route path="/get-started" element={<GetStarted />} />
-        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/user-page" element={<UserPage />} />
         <Route path="/posts" element={<Posts />} />
+        <Route path="/blog/:blogId" element={<Blog />} />
       </Routes>
     </GoogleOAuthProvider>
   </BrowserRouter>

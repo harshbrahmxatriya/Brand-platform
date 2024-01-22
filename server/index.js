@@ -409,3 +409,52 @@ app.get("/get-comments", async (req, res) => {
     res.status(500).json({ error: "An error occured while fetching" });
   }
 });
+
+app.post("/follow", async (req, res) => {
+  try {
+    const { followerEmail, followedEmail, action } = req.body;
+
+    let updateQuery;
+    if (followedEmail === followerEmail) {
+      return res.status(200).json({ message: "You cannot follow yourself" });
+    }
+    if (action === "follow") {
+      updateQuery = {
+        $addToSet: {
+          following: followedEmail,
+        },
+      };
+    } else if (action === "unfollow") {
+      updateQuery = {
+        $pull: {
+          following: followedEmail,
+        },
+      };
+    } else {
+      return res.status(400).json({ error: "Invalid action" });
+    }
+
+    const followerUpdate = await UserSchema.findOneAndUpdate(
+      { email: followerEmail },
+      updateQuery,
+      { new: true }
+    );
+
+    const followedUpdate = await UserSchema.findOneAndUpdate(
+      { email: followedEmail },
+      {
+        [action === "follow" ? "$addToSet" : "$pull"]: {
+          followers: followerEmail,
+        },
+      },
+      { new: true }
+    );
+
+    return res
+      .status(200)
+      .json({ message: "User followed/unfollowed successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occured while updating records" });
+  }
+});

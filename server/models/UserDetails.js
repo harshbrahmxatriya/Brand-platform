@@ -14,6 +14,8 @@ const UserDetails = mongoose.Schema({
   contactNumber: { type: Number },
   DOB: { type: Date },
   brandName: { type: String },
+  followers: [{ type: String }],
+  following: [{ type: String }],
 });
 
 const UserSchema = mongoose.model("login_platform", UserDetails);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { CiHeart } from "react-icons/ci";
 import { MdOutlineModeComment } from "react-icons/md";
 import { GoComment } from "react-icons/go";
@@ -7,8 +8,10 @@ import axios from "axios";
 import SimpleImageSlider from "react-simple-image-slider";
 import ReactSimplyCarousel from "react-simply-carousel";
 import { CiSquareChevRight, CiSquareChevLeft } from "react-icons/ci";
+import { CiShare2 } from "react-icons/ci";
+import { IoShareSocialOutline } from "react-icons/io5";
 
-const PostCard = ({ users, post }) => {
+const PostCard = ({ users, post, setShowSharePost, setBlogId }) => {
   const [isTruncated, setIsTruncated] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [creator, setCreator] = useState();
@@ -18,7 +21,7 @@ const PostCard = ({ users, post }) => {
   const [showComment, setShowComment] = useState(false);
   const [commentsArray, setCommentsArray] = useState(post.comments);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-
+  const navigate = useNavigate();
   const imagesArray = [];
   for (let i = 0; i < post.images.length; i++) {
     imagesArray.push({ url: post.images[i] });
@@ -143,8 +146,8 @@ const PostCard = ({ users, post }) => {
     if (!userEmail) {
       alert("Sign in first");
       return;
-    } else if(comment.length===0){
-      return
+    } else if (comment.length === 0) {
+      return;
     }
     const requestBody = { id: post._id, sender: userEmail, comment };
     await axios
@@ -158,8 +161,11 @@ const PostCard = ({ users, post }) => {
         <h2 className="text-xl ">{post.title}</h2>
         {creator && (
           <img
-            className="h-14 w-14  object-cover rounded-full"
+            className="h-14 w-14  object-cover cursor-pointer rounded-full"
             src={creator.profilePicture}
+            onClick={() => {
+              navigate("/user-page", { state: { creator: creator } });
+            }}
           />
         )}
       </section>
@@ -217,9 +223,24 @@ const PostCard = ({ users, post }) => {
           "
           >
             <GoComment
-              className="mr-2 cursor-pointer fill-black ml-1"
+              className="mr-1.5 cursor-pointer fill-black ml-1"
               color="black"
               onClick={() => setShowComment(!showComment)}
+              size={30}
+            />
+          </button>
+          <button
+            className="border-none flex justify-center items-center p-2 px-1 bg-white border-[rgba(167,167,167,0.7)] 
+          hover:border hover:rounded-full hover:bg-[rgba(167,167,167,0.7)]          
+          "
+            onClick={() => {
+              setShowSharePost(true);
+              setBlogId(post._id);
+            }}
+          >
+            <IoShareSocialOutline
+              className="mr-2 cursor-pointer "
+              color="black"
               size={30}
             />
           </button>

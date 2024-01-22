@@ -2,22 +2,18 @@ import React, { useEffect, useState } from "react";
 import CreatePost from "../components/CreatePost";
 import axios from "axios";
 import PostCard from "../components/PostCard";
-import { useNavigate } from "react-router-dom";
-import SharePost from "../components/SharePost";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Posts = () => {
+const Blog = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [post, setPost] = useState(null);
   const [users, setUsers] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState();
-  const [showSharePost, setShowSharePost] = useState(false);
-  const [blogId, setBlogId] = useState("");
   const navigate = useNavigate();
+  const { blogId } = useParams();
   let serverUrl = import.meta.env.VITE_SERVER_URL;
-  if (!serverUrl) {
-    console.log("no server url !");
-    serverUrl = "https://brand-platform.onrender.com";
-  }
+  console.log(blogId);
   useEffect(() => {
     if (sessionStorage.getItem("userEmail") === null) {
       setIsLoggedIn(false);
@@ -25,6 +21,10 @@ const Posts = () => {
       setIsLoggedIn(true);
     }
   }, []);
+  if (!serverUrl) {
+    console.log("no server url !");
+    serverUrl = "https://brand-platform.onrender.com";
+  }
 
   useEffect(() => {
     axios
@@ -45,6 +45,14 @@ const Posts = () => {
   useEffect(() => {
     getPosts();
   }, []);
+  useEffect(() => {
+    if (blogId && posts.length > 0) {
+      const foundPost = posts.find((post) => post._id === blogId);
+      if (foundPost) {
+        setPost(foundPost);
+      }
+    }
+  }, [blogId, posts]);
   return (
     <div className="flex h-screen bg-gray-50">
       <div className="w-1/4 h-full border-double border-r-4 border-gray-300 ">
@@ -56,17 +64,9 @@ const Posts = () => {
         </div>
       </div>
       <div className="w-2/4 h-full p-2 overflow-y-scroll">
-        {posts &&
-          users &&
-          posts.map((post) => (
-            <PostCard
-              users={users}
-              post={post}
-              key={post._id}
-              setShowSharePost={setShowSharePost}
-              setBlogId={setBlogId}
-            />
-          ))}
+        {posts && users && post && (
+          <PostCard users={users} post={post} key={post._id} />
+        )}
       </div>
       <div
         className="w-1/4 h-full flex flex-col items-end border-double 
@@ -102,20 +102,10 @@ const Posts = () => {
           setShowCreatePost(false);
         }}
       >
-        <CreatePost />
-      </div>
-      <div
-        className={`bg-[rgba(0,0,0,0.53)] h-full w-full fixed 
-        flex items-center justify-center
-        ${showSharePost ? "" : "hidden"}`}
-        onClick={() => {
-          setShowSharePost(false);
-        }}
-      >
-        <SharePost blogId={blogId} setShowSharePost={setShowSharePost} />
+        <CreatePost setShowCreatePost={setShowCreatePost} />
       </div>
     </div>
   );
 };
 
-export default Posts;
+export default Blog;

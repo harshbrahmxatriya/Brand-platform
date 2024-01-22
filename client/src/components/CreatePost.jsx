@@ -3,7 +3,7 @@ import { useState } from "react";
 import ReactQuillWrapper from "./ReactQuillEditor";
 import axios from "axios";
 
-const CreatePost = ({ setShowCreatePost }) => {
+const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState(null);
